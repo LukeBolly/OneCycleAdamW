@@ -1,5 +1,7 @@
 # A Tensorflow 2.3 implementation of AdamW with a One-Cycle learning rate schedule
 
+Based on the results published by S. Gugger and J. Howard here: https://www.fast.ai/2018/07/02/adam-weight-decay/
+
 <img src="results.png" alt="Image not found" width="400"/>
 
 # Usage
