@@ -79,6 +79,7 @@ def train_mnist(optimiser, experiment_title):
         with summary_writer.as_default():
             tf.summary.scalar('val/model loss', val_loss_sum / val_step, step=step)
 
+
 if __name__ == '__main__':
     high_lr = 0.003
     high_wd = 0.0003
