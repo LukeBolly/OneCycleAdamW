@@ -16,8 +16,8 @@ class OneCycleAdamW(tfa.optimizers.AdamW):
 class OneCycleSchedule(tf.optimizers.schedules.LearningRateSchedule):
     def __init__(self, cycle_length):
         self._warmup_end_step = int(cycle_length * 0.1)
-        self._max_end_step = self._warmup_end_step + int(cycle_length * 0.5)
-        self._decay_end_step = self._max_end_step + int(cycle_length * 0.4)
+        self._max_end_step = self._warmup_end_step + int(cycle_length * 0.4)
+        self._decay_end_step = self._max_end_step + int(cycle_length * 0.5)
 
     def __call__(self, step):
         def warmup():
@@ -38,7 +38,7 @@ class OneCycleSchedule(tf.optimizers.schedules.LearningRateSchedule):
         def final_decay():
             # then exponential decay from there
             final_step = float(step - self._decay_end_step)
-            lr_factor = 0.1 * tf.math.pow(0.95, final_step)
+            lr_factor = 0.1 * tf.math.pow(1 - 1 / self._decay_end_step, final_step)
             return lr_factor
 
         learning_rate = tf.case([(tf.less_equal(step, self._warmup_end_step), warmup),
@@ -55,11 +55,11 @@ class OneCycleSchedule(tf.optimizers.schedules.LearningRateSchedule):
             return momentum
 
         def max_lr():
-            # remain at max for a period
+            # remain at min momentum while learning rate is maxed
             return 0.85
 
         def initial_decay():
-            # decay at half the speed we warmed up at
+            # decay back up to max momentum
             decay_step = step - self._max_end_step
             momentum = 0.85 + 0.1 * (decay_step / (self._decay_end_step - self._max_end_step))
             return momentum

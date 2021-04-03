@@ -69,6 +69,7 @@ def train_mnist(optimiser, experiment_title):
 
             with summary_writer.as_default():
                 tf.summary.scalar('train/model loss', loss, step=step)
+                tf.summary.scalar('Train/Learning Rate', optimiser._decayed_lr(tf.float32), step=step)
 
         val_loss_sum = 0
 
@@ -99,8 +100,8 @@ if __name__ == '__main__':
     low_adamW = tfa.optimizers.AdamW(low_wd, low_lr)
     train_mnist(low_adam, f'adamW {low_lr} LR')
 
-    high_oc_adamw = OneCycleAdamW(high_lr, high_wd, 9000)
+    high_oc_adamw = OneCycleAdamW(high_lr, high_wd, 7000)
     train_mnist(high_oc_adamw, f'OC adamW {high_lr} LR')
 
-    low_ic_adamw_ = OneCycleAdamW(low_lr, low_wd, 9000)
+    low_ic_adamw_ = OneCycleAdamW(low_lr, low_wd, 7000)
     train_mnist(low_ic_adamw_, f'OC adamW {low_lr} LR')
